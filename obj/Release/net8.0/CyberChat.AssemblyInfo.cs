@@ -11,9 +11,9 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("CyberChat")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f1113809f5effa762ee3f04972a4cc8d308a7c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+61178ca60f254f3c6e08f0377963c87f2dd850e8")]
 [assembly: System.Reflection.AssemblyProductAttribute("CyberChat")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CyberChat")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

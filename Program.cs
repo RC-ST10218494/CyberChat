@@ -1,26 +1,38 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices; // Needed for OS detection
 using System.Media; // For SoundPlayer (Windows only)
-using System.IO; // For File.Exists check
 
 class Program
 {
     static void Main()
     {
-        Console.WriteLine("Welcome to CyberChat!");
+        // Path to the ASCII art text file
+        string asciiFilePath = "Resources\\asciiart.txt";
+
+        // Read ASCII art from the file
+        string asciiArt = ReadAsciiArt(asciiFilePath);
+
+        // If the file exists and is not empty, print the ASCII art
+        if (!string.IsNullOrEmpty(asciiArt))
+        {
+            Console.WriteLine(asciiArt);
+        }
+        else
+        {
+            Console.WriteLine("Error: ASCII art file is empty or not found.");
+        }
+
+        // Path to the sound file
+        string soundFilePath = "Resources\\CyberChatVoice.wav";
 
         // Play greeting sound (only on Windows)
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // Define the path to the sound file
-            string soundFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "greeting.wav");
-
-            // Check if the file exists
             if (File.Exists(soundFilePath))
             {
                 try
                 {
-                    // Create the SoundPlayer object
                     SoundPlayer player = new SoundPlayer(soundFilePath);
                     player.Play();
                 }
@@ -31,7 +43,7 @@ class Program
             }
             else
             {
-                Console.WriteLine("Error playing sound: File not found at " + soundFilePath);
+                Console.WriteLine($"Error: Sound file '{soundFilePath}' not found.");
             }
         }
         else
@@ -41,7 +53,6 @@ class Program
 
         Console.WriteLine("How can I assist you with cybersecurity today?");
 
-        // Main loop for the chatbot
         while (true)
         {
             Console.Write("You: ");
@@ -53,20 +64,32 @@ class Program
                 continue;
             }
 
-            // Exit condition
             if (userInput == "exit")
             {
                 Console.WriteLine("CyberChat: Goodbye! Stay safe online.");
                 break;
             }
 
-            // Get the response based on user input
             string response = GetCyberSecurityResponse(userInput);
             Console.WriteLine($"CyberChat: {response}");
         }
     }
 
-    // Function to provide responses based on user input
+    static string ReadAsciiArt(string path)
+    {
+        try
+        {
+            // Read the content of the ASCII art file
+            return File.Exists(path) ? File.ReadAllText(path) : null;
+        }
+        catch (Exception ex)
+        {
+            // If there is an error reading the file, print the error message
+            Console.WriteLine($"Error reading ASCII art file: {ex.Message}");
+            return null;
+        }
+    }
+
     static string GetCyberSecurityResponse(string input)
     {
         if (input.Contains("password"))
