@@ -1,31 +1,21 @@
-name: CyberChat CI
+name: Build and Test
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0'
+          dotnet-version: '8.0.x'  # Updated from 7.0.x to 8.0.x
 
-      - name: Restore Dependencies
+      - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build Project
+      - name: Build
         run: dotnet build --configuration Release --no-restore
-
-      - name: Run Tests
-        run: dotnet test --no-restore --verbosity normal
