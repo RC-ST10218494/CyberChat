@@ -1,4 +1,4 @@
-name: .NET Core Build
+name: CyberChat CI
 
 on:
   push:
@@ -11,18 +11,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        sdk: [5.0, 6.0]
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up .NET SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ matrix.sdk }}
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release    
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0'
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Tests
+        run: dotnet test --no-restore --verbosity normal
