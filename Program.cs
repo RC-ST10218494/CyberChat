@@ -1,105 +1,69 @@
 using System;
-using System.Media;
-using System.IO;
-using System.Threading;
+using System.Runtime.InteropServices; // Needed for OS detection
+using System.Media; // For SoundPlayer (Windows only)
 
-class CyberChat
+class Program
 {
     static void Main()
     {
-        // Display ASCII Art
-        DisplayAsciiArt();
+        Console.WriteLine("Welcome to CyberChat!");
 
-        // Play the Voice Greeting
-        PlayVoiceGreeting();
-
-        // Greet the User
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("\nWelcome to CyberChat! Your Cybersecurity Awareness Assistant.");
-        Console.ResetColor();
-
-        // Ask for User's Name
-        Console.Write("\nPlease enter your name: ");
-        string userName = Console.ReadLine()?.Trim();
-
-        while (string.IsNullOrEmpty(userName))
+        // Play greeting sound (only on Windows)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Name cannot be empty! Please enter your name.");
-            Console.ResetColor();
-            Console.Write("\nEnter your name: ");
-            userName = Console.ReadLine()?.Trim();
-        }
-
-        Console.WriteLine($"\nHello, {userName}! I'm here to help you with cybersecurity awareness.\n");
-
-        // Chat Interaction
-        ChatWithUser();
-    }
-
-    static void DisplayAsciiArt()
-    {
-        string path = "ASCIIArt.txt";
-        if (File.Exists(path))
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(File.ReadAllText(path));
-            Console.ResetColor();
+            try
+            {
+                SoundPlayer player = new SoundPlayer("greeting.wav");
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error playing sound: {ex.Message}");
+            }
         }
         else
         {
-            Console.WriteLine("ASCII Art file missing!");
+            Console.WriteLine("Sound is only supported on Windows.");
         }
-    }
 
-    static void PlayVoiceGreeting()
-    {
-        string audioFile = "greeting.wav";
-        if (File.Exists(audioFile))
-        {
-            SoundPlayer player = new SoundPlayer(audioFile);
-            player.PlaySync();
-        }
-        else
-        {
-            Console.WriteLine("Voice greeting file missing!");
-        }
-    }
+        Console.WriteLine("How can I assist you with cybersecurity today?");
 
-    static void ChatWithUser()
-    {
         while (true)
         {
-            Console.Write("\nAsk me about cybersecurity (or type 'exit' to quit): ");
-            string userInput = Console.ReadLine()?.ToLower().Trim();
+            Console.Write("You: ");
+            string userInput = Console.ReadLine()?.ToLower();
+
+            if (string.IsNullOrWhiteSpace(userInput))
+            {
+                Console.WriteLine("CyberChat: Please enter a valid input.");
+                continue;
+            }
 
             if (userInput == "exit")
             {
-                Console.WriteLine("Goodbye! Stay safe online.");
+                Console.WriteLine("CyberChat: Goodbye! Stay safe online.");
                 break;
             }
 
-            switch (userInput)
-            {
-                case "how are you?":
-                    Console.WriteLine("I'm just a bot, but I'm here to help!");
-                    break;
-                case "what's your purpose?":
-                    Console.WriteLine("I educate people about online safety and cybersecurity.");
-                    break;
-                case "password safety":
-                    Console.WriteLine("Use long and unique passwords. A password manager can help!");
-                    break;
-                case "phishing":
-                    Console.WriteLine("Phishing is when scammers trick you into giving personal information. Be cautious of suspicious emails!");
-                    break;
-                case "safe browsing":
-                    Console.WriteLine("Always check URLs before clicking. Avoid unknown websites!");
-                    break;
-                default:
-                    Console.WriteLine("I didn't quite understand that. Could you rephrase?");
-                    break;
-            }
+            string response = GetCyberSecurityResponse(userInput);
+            Console.WriteLine($"CyberChat: {response}");
         }
+    }
+
+    static string GetCyberSecurityResponse(string input)
+    {
+        if (input.Contains("password"))
+            return "Use strong passwords with a mix of letters, numbers, and symbols.";
+
+        if (input.Contains("phishing"))
+            return "Beware of phishing emails. Don't click suspicious links.";
+
+        if (input.Contains("antivirus"))
+            return "Always keep your antivirus software updated.";
+
+        if (input.Contains("update"))
+            return "Regularly update your software to patch security vulnerabilities.";
+
+        return "I'm not sure about that. Can you ask about passwords, phishing, or updates?";
     }
 }
