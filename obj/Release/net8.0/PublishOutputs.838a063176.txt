@@ -1,7 +1,0 @@
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\CyberChat.exe
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\CyberChat.dll
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\CyberChat.deps.json
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\CyberChat.runtimeconfig.json
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\CyberChat.pdb
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\System.Windows.Extensions.dll
-C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Release\net8.0\publish\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
