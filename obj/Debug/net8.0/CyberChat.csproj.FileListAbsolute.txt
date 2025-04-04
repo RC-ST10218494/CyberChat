@@ -13,3 +13,7 @@ C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\obj\Debug\net8.0\refint\Cyb
 C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\obj\Debug\net8.0\CyberChat.pdb
 C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\obj\Debug\net8.0\CyberChat.genruntimeconfig.cache
 C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\obj\Debug\net8.0\ref\CyberChat.dll
+C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Debug\net8.0\System.Windows.Extensions.dll
+C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
+C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\obj\Debug\net8.0\CyberChat.csproj.AssemblyReference.cache
+C:\Users\kgots\OneDrive\New folder\Desktop\CyberChat\obj\Debug\net8.0\CyberChat.csproj.Up2Date
