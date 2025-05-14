@@ -7,6 +7,7 @@ class Program
 {
     static void Main()
     {
+        // Path to ASCII art
         string asciiFilePath = "Resources\\ASCIIArt.txt";
         string asciiArt = ReadAsciiArt(asciiFilePath);
 
@@ -19,6 +20,7 @@ class Program
             Console.WriteLine("Error: ASCII art file is empty or not found.");
         }
 
+        // Sound greeting
         string soundFilePath = "Resources\\CyberChatVoice.wav";
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -44,12 +46,10 @@ class Program
             Console.WriteLine("Sound is only supported on Windows.");
         }
 
-        Console.WriteLine("How can I assist you with cybersecurity today?");
+        // Start chatbot interaction
+        CyberChatBot chatBot = new CyberChatBot();
 
-        // Initialize chatbot using delegate
-        CyberChatBot bot = new CyberChatBot();
-        ChatResponseHandler handler = new ChatResponseHandler(bot.GetResponse);
-
+        Console.WriteLine("\nCyberChat: How can I assist you with cybersecurity today?");
         while (true)
         {
             Console.Write("You: ");
@@ -67,7 +67,7 @@ class Program
                 break;
             }
 
-            string response = handler(userInput);
+            string response = chatBot.GetResponse(userInput);
             Console.WriteLine($"CyberChat: {response}");
         }
     }

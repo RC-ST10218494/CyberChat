@@ -1,82 +1,114 @@
 using System;
 using System.Collections.Generic;
 
-public delegate string ChatResponseHandler(string userInput);
-
 public class CyberChatBot
 {
-    private readonly Dictionary<string, List<string>> keywordResponses;
-    private readonly Dictionary<string, string> memory;
+    private Dictionary<string, List<string>> responses;
+    private string userName;
+    private string favoriteTopic;
+    private string lastTopic;
 
     public CyberChatBot()
     {
-        memory = new Dictionary<string, string>();
+        InitializeResponses();
+        userName = null;
+        favoriteTopic = null;
+        lastTopic = null;
+    }
 
-        keywordResponses = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+    private void InitializeResponses()
+    {
+        responses = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
         {
-            ["password"] = new List<string>
-            {
-                "Use a strong, unique password for every account.",
-                "Never reuse old passwords.",
-                "Use a password manager to store passwords securely."
+            { "password", new List<string>
+                {
+                    "Use strong passwords with a mix of letters, numbers, and symbols.",
+                    "Avoid using the same password across multiple sites.",
+                    "Consider using a password manager to store your credentials."
+                }
             },
-            ["phishing"] = new List<string>
-            {
-                "Be cautious of unexpected emails asking for personal info.",
-                "Avoid clicking on suspicious links.",
-                "Verify email sender addresses before responding."
+            { "phishing", new List<string>
+                {
+                    "Never click on suspicious links in emails.",
+                    "Double-check the sender's email address before responding.",
+                    "Phishing scams often create a sense of urgency — stay calm and verify first."
+                }
             },
-            ["privacy"] = new List<string>
-            {
-                "Review privacy settings on all your social accounts.",
-                "Avoid oversharing personal information online.",
-                "Use secure and encrypted messaging apps."
+            { "privacy", new List<string>
+                {
+                    "Always check the permissions apps request on your devices.",
+                    "Limit the personal information you share online.",
+                    "Use privacy settings on social media platforms."
+                }
             },
-            ["scam"] = new List<string>
-            {
-                "If it sounds too good to be true, it probably is.",
-                "Scammers often impersonate official institutions.",
-                "Always verify through trusted sources before sharing details."
+            { "scam", new List<string>
+                {
+                    "Be cautious of 'too good to be true' deals.",
+                    "Don’t share personal or financial information with unknown contacts.",
+                    "Report scams to your local authority or platform support."
+                }
             }
         };
     }
 
     public string GetResponse(string input)
     {
-        if (input.Contains("name is"))
-        {
-            string name = input.Substring(input.IndexOf("name is") + 7).Trim();
-            memory["name"] = name;
-            return $"Nice to meet you, {name}!";
-        }
+        if (string.IsNullOrWhiteSpace(input))
+            return "CyberChat: Please enter something for me to respond to.";
 
-        if (input.Contains("interested in"))
-        {
-            string topic = input.Substring(input.IndexOf("interested in") + 13).Trim();
-            memory["interest"] = topic;
-            return $"Great! I'll remember you're interested in {topic}.";
-        }
+        input = input.ToLower();
 
-        if (input.Contains("worried") || input.Contains("frustrated"))
-            return "It's okay to feel that way. Let's go over how you can protect yourself.";
+        // Sentiment handling
+        if (input.Contains("worried"))
+            return "It's completely understandable to feel worried. Cyber threats can be scary, but I'm here to help.";
 
         if (input.Contains("curious"))
-            return "Curiosity is the first step to being informed. Let's learn together!";
+            return "Curiosity is great! Cybersecurity knowledge helps you stay protected. Ask away!";
 
-        foreach (var keyword in keywordResponses.Keys)
+        if (input.Contains("frustrated"))
+            return "Don't worry — cybersecurity can be tricky, but together we'll make it simple.";
+
+        // Name memory (e.g., "My name is Sam")
+        if (input.StartsWith("my name is"))
         {
-            if (input.Contains(keyword))
+            userName = input.Substring(11).Trim();
+            return $"Nice to meet you, {userName}! I'm here to help with cybersecurity.";
+        }
+
+        // Favorite topic memory (e.g., "I'm interested in privacy")
+        if (input.Contains("i'm interested in"))
+        {
+            favoriteTopic = input.Substring(input.IndexOf("i'm interested in") + 17).Trim();
+            return $"Great! I'll remember that you're interested in {favoriteTopic}. It's an important area of cybersecurity.";
+        }
+
+        // Follow-up detection
+        if (input.Contains("tell me more") || input.Contains("more info"))
+        {
+            if (!string.IsNullOrEmpty(lastTopic) && responses.ContainsKey(lastTopic))
             {
-                var responses = keywordResponses[keyword];
-                return responses[new Random().Next(responses.Count)];
+                Random rand = new Random();
+                var followUps = responses[lastTopic];
+                return followUps[rand.Next(followUps.Count)];
+            }
+            else
+            {
+                return "Could you clarify what you'd like more information about?";
             }
         }
 
-        if (memory.ContainsKey("interest"))
+        // Keyword match
+        foreach (var keyword in responses.Keys)
         {
-            return $"As someone interested in {memory["interest"]}, you should explore ways to secure your data.";
+            if (input.Contains(keyword))
+            {
+                lastTopic = keyword;
+                Random rand = new Random();
+                var replyList = responses[keyword];
+                return replyList[rand.Next(replyList.Count)];
+            }
         }
 
-        return "I'm not sure I understand. Can you try rephrasing your question?";
+        return "I'm not sure I understand. Can you try rephrasing or ask about topics like passwords, scams, or privacy?";
     }
 }
