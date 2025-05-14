@@ -1,17 +1,22 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Media;
+using System.Runtime.InteropServices; // Needed for OS detection
+using System.Media; // For SoundPlayer (Windows only)
 
 class Program
 {
     static void Main()
     {
-        // Path to ASCII art file
+        // Create an instance of CyberChatBot
+        CyberChatBot chatBot = new CyberChatBot();
+
+        // Path to the ASCII art text file
         string asciiFilePath = "Resources\\ASCIIArt.txt";
 
-        // Read and display ASCII art
+        // Read ASCII art from the file
         string asciiArt = ReadAsciiArt(asciiFilePath);
+
+        // If the file exists and is not empty, print the ASCII art
         if (!string.IsNullOrEmpty(asciiArt))
         {
             Console.WriteLine(asciiArt);
@@ -21,8 +26,10 @@ class Program
             Console.WriteLine("Error: ASCII art file is empty or not found.");
         }
 
-        // Play greeting sound (Windows only)
+        // Path to the sound file
         string soundFilePath = "Resources\\CyberChatVoice.wav";
+
+        // Play greeting sound (only on Windows)
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             if (File.Exists(soundFilePath))
@@ -47,49 +54,43 @@ class Program
             Console.WriteLine("Sound is only supported on Windows.");
         }
 
-        // Prompt user for name
-        Console.Write("Welcome to CyberChat! What's your name? ");
-        string userName = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(userName))
-        {
-            userName = "User";
-        }
+        // Start the conversation
+        Console.WriteLine("How can I assist you with cybersecurity today?");
 
-        // Create chatbot instance and greet
-        CyberChatBot chatBot = new CyberChatBot(userName);
-        Console.WriteLine($"\nHello {userName}, how can I assist you with cybersecurity today?\n");
-
-        // Main chat loop
         while (true)
         {
             Console.Write("You: ");
-            string userInput = Console.ReadLine();
+            string userInput = Console.ReadLine()?.ToLower();
 
             if (string.IsNullOrWhiteSpace(userInput))
             {
-                Console.WriteLine("CyberChat: Please enter a valid message.");
+                Console.WriteLine("CyberChat: Please enter a valid input.");
                 continue;
             }
 
-            if (userInput.ToLower() == "exit")
+            if (userInput == "exit")
             {
                 Console.WriteLine("CyberChat: Goodbye! Stay safe online.");
                 break;
             }
 
+            // Get response from CyberChatBot
             string response = chatBot.GetResponse(userInput);
             Console.WriteLine($"CyberChat: {response}");
         }
     }
 
+    // Method to read the ASCII art file
     static string ReadAsciiArt(string path)
     {
         try
         {
+            // Read the content of the ASCII art file
             return File.Exists(path) ? File.ReadAllText(path) : null;
         }
         catch (Exception ex)
         {
+            // If there is an error reading the file, print the error message
             Console.WriteLine($"Error reading ASCII art file: {ex.Message}");
             return null;
         }
