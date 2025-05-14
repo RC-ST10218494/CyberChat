@@ -1,153 +1,87 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Media;
 
 class Program
 {
-    // Memory storage
-    static string userName = "";
-    static string favoriteTopic = "";
-
-    // Randomizer
-    static Random rand = new Random();
-
     static void Main()
     {
-        ShowAsciiArt();
-        PlayGreetingSound();
+        string asciiFilePath = "Resources\\ASCIIArt.txt";
+        string asciiArt = ReadAsciiArt(asciiFilePath);
 
-        Console.WriteLine("CyberChat: Hi there! What's your name?");
-        Console.Write("You: ");
-        userName = Console.ReadLine();
-        Console.WriteLine($"CyberChat: Nice to meet you, {userName}! How can I assist you with cybersecurity today?");
+        if (!string.IsNullOrEmpty(asciiArt))
+        {
+            Console.WriteLine(asciiArt);
+        }
+        else
+        {
+            Console.WriteLine("Error: ASCII art file is empty or not found.");
+        }
+
+        string soundFilePath = "Resources\\CyberChatVoice.wav";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            if (File.Exists(soundFilePath))
+            {
+                try
+                {
+                    SoundPlayer player = new SoundPlayer(soundFilePath);
+                    player.Play();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error playing sound: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error: Sound file '{soundFilePath}' not found.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Sound is only supported on Windows.");
+        }
+
+        Console.WriteLine("How can I assist you with cybersecurity today?");
+
+        // Initialize chatbot using delegate
+        CyberChatBot bot = new CyberChatBot();
+        ChatResponseHandler handler = new ChatResponseHandler(bot.GetResponse);
 
         while (true)
         {
-            Console.Write("\nYou: ");
+            Console.Write("You: ");
             string userInput = Console.ReadLine()?.ToLower();
 
             if (string.IsNullOrWhiteSpace(userInput))
             {
-                Console.WriteLine("CyberChat: Please enter something meaningful.");
+                Console.WriteLine("CyberChat: Please enter a valid input.");
                 continue;
             }
 
             if (userInput == "exit")
             {
-                Console.WriteLine($"CyberChat: Goodbye {userName}! Stay safe online.");
+                Console.WriteLine("CyberChat: Goodbye! Stay safe online.");
                 break;
             }
 
-            Console.WriteLine($"CyberChat: {GetResponse(userInput)}");
+            string response = handler(userInput);
+            Console.WriteLine($"CyberChat: {response}");
         }
     }
 
-    static void ShowAsciiArt()
+    static string ReadAsciiArt(string path)
     {
-        string path = "Resources\\ASCIIArt.txt";
-        if (File.Exists(path))
+        try
         {
-            Console.WriteLine(File.ReadAllText(path));
+            return File.Exists(path) ? File.ReadAllText(path) : null;
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine("Error: ASCII art not found.");
+            Console.WriteLine($"Error reading ASCII art file: {ex.Message}");
+            return null;
         }
-    }
-
-    static void PlayGreetingSound()
-    {
-        string path = "Resources\\greeting.wav";
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && File.Exists(path))
-        {
-            try
-            {
-                new SoundPlayer(path).Play();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error playing sound: {ex.Message}");
-            }
-        }
-    }
-
-    static string GetResponse(string input)
-    {
-        if (DetectSentiment(input, out string sentimentResponse))
-            return sentimentResponse;
-
-        if (DetectKeyword(input, out string keywordResponse))
-            return keywordResponse;
-
-        if (input.Contains("name"))
-            return $"Your name is {userName}, of course!";
-
-        if (input.Contains("favorite") || input.Contains("interested"))
-        {
-            if (input.Contains("privacy"))
-            {
-                favoriteTopic = "privacy";
-                return "Great! I'll remember that you're interested in privacy. It's a crucial part of staying safe online.";
-            }
-            else if (!string.IsNullOrEmpty(favoriteTopic))
-            {
-                return $"As someone interested in {favoriteTopic}, remember to review your security settings regularly.";
-            }
-        }
-
-        return "I'm not sure I understand. Could you rephrase or ask about passwords, scams, or privacy?";
-    }
-
-    static bool DetectKeyword(string input, out string response)
-    {
-        var phishingTips = new List<string>
-        {
-            "Be cautious of emails asking for personal info.",
-            "Avoid clicking suspicious links in messages.",
-            "Always verify the sender's email address."
-        };
-
-        if (input.Contains("password"))
-        {
-            response = "Use strong, unique passwords with letters, numbers, and symbols.";
-            return true;
-        }
-        else if (input.Contains("scam") || input.Contains("phishing"))
-        {
-            response = phishingTips[rand.Next(phishingTips.Count)];
-            return true;
-        }
-        else if (input.Contains("privacy"))
-        {
-            response = "Check your social media privacy settings and limit what you share publicly.";
-            return true;
-        }
-
-        response = null;
-        return false;
-    }
-
-    static bool DetectSentiment(string input, out string response)
-    {
-        if (input.Contains("worried") || input.Contains("scared"))
-        {
-            response = "It's okay to feel worried. Scammers are tricky, but with the right knowledge, you're safe.";
-            return true;
-        }
-        if (input.Contains("frustrated"))
-        {
-            response = "Frustration is normal. Cybersecurity can be complex, but I'm here to help you through it.";
-            return true;
-        }
-        if (input.Contains("curious"))
-        {
-            response = "Curiosity is great! Let me help you explore cybersecurity topics.";
-            return true;
-        }
-
-        response = null;
-        return false;
     }
 }
