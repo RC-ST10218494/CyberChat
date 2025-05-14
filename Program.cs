@@ -7,16 +7,9 @@ class Program
 {
     static void Main()
     {
-        // Create an instance of CyberChatBot
-        CyberChatBot chatBot = new CyberChatBot();
-
-        // Path to the ASCII art text file
         string asciiFilePath = "Resources\\ASCIIArt.txt";
-
-        // Read ASCII art from the file
         string asciiArt = ReadAsciiArt(asciiFilePath);
 
-        // If the file exists and is not empty, print the ASCII art
         if (!string.IsNullOrEmpty(asciiArt))
         {
             Console.WriteLine(asciiArt);
@@ -26,10 +19,8 @@ class Program
             Console.WriteLine("Error: ASCII art file is empty or not found.");
         }
 
-        // Path to the sound file
         string soundFilePath = "Resources\\CyberChatVoice.wav";
 
-        // Play greeting sound (only on Windows)
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             if (File.Exists(soundFilePath))
@@ -54,17 +45,37 @@ class Program
             Console.WriteLine("Sound is only supported on Windows.");
         }
 
-        // Start the conversation
-        Console.WriteLine("How can I assist you with cybersecurity today?");
+        Console.WriteLine("\nCyberChat: Hello! How can I assist you with cybersecurity today?");
+        Console.WriteLine("Type 'exit' to end the chat.\n");
+
+        CyberChatBot bot = new CyberChatBot();
 
         while (true)
         {
             Console.Write("You: ");
-            string userInput = Console.ReadLine()?.ToLower();
+            string userInput;
+
+            try
+            {
+                userInput = Console.ReadLine();
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("\nCyberChat: Input error encountered. Exiting chat.");
+                break;
+            }
+
+            if (userInput == null)
+            {
+                Console.WriteLine("\nCyberChat: Input was null. Ending session for your safety.");
+                break;
+            }
+
+            userInput = userInput.Trim().ToLower();
 
             if (string.IsNullOrWhiteSpace(userInput))
             {
-                Console.WriteLine("CyberChat: Please enter a valid input.");
+                Console.WriteLine("CyberChat: Please enter a valid question or type 'exit' to leave.");
                 continue;
             }
 
@@ -74,23 +85,26 @@ class Program
                 break;
             }
 
-            // Get response from CyberChatBot
-            string response = chatBot.GetResponse(userInput);
-            Console.WriteLine($"CyberChat: {response}");
+            try
+            {
+                string response = bot.GetResponse(userInput);
+                Console.WriteLine($"CyberChat: {response}\n");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"CyberChat: Oops! Something went wrong: {ex.Message}");
+            }
         }
     }
 
-    // Method to read the ASCII art file
     static string ReadAsciiArt(string path)
     {
         try
         {
-            // Read the content of the ASCII art file
             return File.Exists(path) ? File.ReadAllText(path) : null;
         }
         catch (Exception ex)
         {
-            // If there is an error reading the file, print the error message
             Console.WriteLine($"Error reading ASCII art file: {ex.Message}");
             return null;
         }
